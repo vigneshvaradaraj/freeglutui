@@ -1,72 +1,92 @@
-#include "GL/glut.h"
-#include <math.h>
-#include <stdio.h>
+#include "GL/freeglut.h"
+#include "statemachine.h"
 
-class KM
-{
-    //kalman members
-    int x,y,vx,vy;
-    //member functions
-    public:
-    KM(int a,int b,int c,int d):x(a),y(b),vx(c),vy(d)
-    {
-        
+
+class Button {
+public:
+    int x, y, width, height;
+    bool pressed;
+
+    Button(int x_, int y_, int w, int h)
+        : x(x_), y(y_), width(w), height(h), pressed(false) {}
+
+    void draw() const {
+        if (pressed)
+            glColor3f(0.0f, 1.0f, 0.0f);  // Green if pressed
+        else
+            glColor3f(1.0f, 0.0f, 0.0f);  // Red if not pressed
+
+        glBegin(GL_QUADS);
+        glVertex2i(x, y);
+        glVertex2i(x + width, y);
+        glVertex2i(x + width, y + height);
+        glVertex2i(x, y + height);
+        glEnd();
     }
-    void update(void);
-    void meassure(void);
-    void display(void);
+
+    bool isInside(int mx, int my) const {
+        return (mx >= x && mx <= x + width && my >= y && my <= y + height);
+    }
 };
 
-KM km_ob(0,0,0,0);
+Button button_idle(50, 100, 100, 50);
+Button button_settings(200, 100, 100, 50);
 
-void KM::update(void)
-{
-    //nothing
-}
-void KM::meassure(void)
-{
-    //nothing
-}
-void KM::display(void)
-{
-    glClear(GL_COLOR_BUFFER_BIT);  // Clear the screen
-    glLoadIdentity();              // Reset transformations
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    glColor3f(1.0, 0.0, 0.0);  // Set color to Red
-    //glBegin(GL_LINES);
-        glVertex2f(-1.0, -1.0);  // Start at bottom-left (-1, -1)
-        glVertex2f(1.0, 1.0);    // End at top-right (1, 1)
-    //glEnd();
+    switch(current_state)
+    {
+        case IDLE_STATE:
+        {
+            button_idle.draw();
+            break;
+        }
+        case SETTINGS_STATE:
+        {
+            button_settings.draw();
+            break;
+        }
 
-    glColor3f(0.0, 0.0, 1.0);  // Set color to Blue
-    //glBegin(GL_LINES);
-        glVertex2f(-1.0, 1.0);  // Start at top-left (-1, 1)
-        glVertex2f(1.0, -1.0);  // End at bottom-right (1, -1)
-    //glEnd();
-    printf("howmany\n");
-    glFlush();  // Render the drawing
+    }
+
+    glutSwapBuffers();
 }
 
-void display() 
-{
-    km_ob.display();
+void mouse(int button, int state, int x, int y) {
+    y = 300 - y;  // Convert from window to OpenGL coordinates
+
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        if (button_idle.isInside(x, y)) {
+            button_idle.pressed = !button_idle.pressed;
+            printf("idle pressed!");
+            post_event(IDLE_BUTTON_EVENT);
+        } else if (button_settings.isInside(x, y)) {
+            button_settings.pressed = !button_settings.pressed;
+            printf("settings pressed!");
+            post_event(SETTINGS_BUTTON_EVENT);
+        }
+    }
+
+    glutPostRedisplay();
 }
 
 void init() {
-    glClearColor(0.0, 0.0, 0.0, 1.0); // Set background to white
-    glColor3f(1.0, 1.0, 1.0); // Set default drawing color to black
+    glClearColor(1, 1, 1, 1); // white background
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(-3.5, 3.5, -1.5, 1.5); // Set coordinate system
+    gluOrtho2D(0, 400, 0, 300);  // Set coordinate system
 }
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
-    glutInitWindowSize(800, 500);  // Set window size to 800x600 pixels
-    glutInitWindowPosition(100, 0);  // Set window position on the screen
-    glutCreateWindow("Graph");
-    glutDisplayFunc(display);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(400, 300);
+    glutCreateWindow("Two Button Demo");
+
     init();
+    glutDisplayFunc(display);
+    glutMouseFunc(mouse);
+
     glutMainLoop();
     return 0;
 }
