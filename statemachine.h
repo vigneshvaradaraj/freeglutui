@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include "GL/freeglut.h"
 
+#define BUTTON_IDLE_X  50
+#define BUTTON_IDLE_Y  100
+#define BUTTON_SETTINGS_X 200
+#define BUTTON_SETTINGS_Y 100
+
+#define BUTTON_PO_OFFSET 10
+
 class Button {
 public:
     int x, y, width, height;
@@ -10,11 +17,6 @@ public:
         : x(x_), y(y_), width(w), height(h), pressed(false) {}
 
     void draw() const {
-        if (pressed)
-            glColor3f(0.0f, 1.0f, 0.0f);  // Green if pressed
-        else
-            glColor3f(1.0f, 0.0f, 0.0f);  // Red if not pressed
-
         glBegin(GL_QUADS);
         glVertex2i(x, y);
         glVertex2i(x + width, y);
@@ -63,3 +65,5 @@ void settings_button_SC_ev_handler(void);
 void settings_entry(void);
 void settings_exit(void);
 void post_event(event_t event);
+
+void drawText(const char* text, int x, int y);

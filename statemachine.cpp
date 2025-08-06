@@ -42,16 +42,19 @@ static void displayText(float x, float y, const char* text)
 void idle_state_display(void)
 {
     printf("idle_state_display executed!\n");
-    glColor3f(0.0f, 0.0f, 1.0f);//set text color
-    displayText(-0.8f, 0.9f, "idle_state");
+    drawText("IDLE", 80, 250);
+    
+    glColor3f(1.0f, 0.0f, 0.0f);  
     button_idle.draw();
+    drawText("SET", BUTTON_IDLE_X + BUTTON_PO_OFFSET, BUTTON_IDLE_Y + BUTTON_PO_OFFSET);
 }
 void settings_state_disply(void)
 {
     printf("settings_state_disply executed!\n");
-    glColor3f(0.0f, 0.0f, 1.0f);//set text color
-    displayText(-0.8f, 0.9f, "settings_state");
+    drawText("SETTINGS", 80, 250);
+    glColor3f(0.0f, 1.0f, 1.0f);
     button_settings.draw();
+    drawText("IDL", BUTTON_SETTINGS_X + BUTTON_PO_OFFSET, BUTTON_SETTINGS_Y + BUTTON_PO_OFFSET);
 }
 
 void idle_button_SC_ev_handler(void)
