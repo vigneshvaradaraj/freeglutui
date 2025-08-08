@@ -1,4 +1,10 @@
 @startuml
-[*] --> idle
+scale 700 width
+[*] --> IDLE
+IDLE --> SETTINGS : settings button pressed
+IDLE : display settings button
+
+SETTINGS --> IDLE : idle butten pressed
+SETTINGS : display idle pressed
 
 @enduml

@@ -31,14 +31,6 @@ void post_event(event_t event)
     }
 }
 
-static void displayText(float x, float y, const char* text) 
-{
-    glRasterPos2f(x, y); // Set position in window
-    for (int i = 0; i < strlen(text); ++i) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
-    }
-}
-
 void idle_state_display(void)
 {
     printf("idle_state_display executed!\n");
