@@ -5,3 +5,4 @@ g++ test_freegult.cpp statemachine.cpp -o ap -L. ./freeglut.dll -lopengl32 -lglu
 
 
 test:commit-1
+test:patch-test
